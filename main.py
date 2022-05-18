@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 import time
 from random import randrange
 from fake_useragent import UserAgent
@@ -77,79 +78,65 @@ soup = BeautifulSoup(source_html, 'lxml')
 
 tab_ = soup.find_all('div', class_='list-group-item small')
 
+
+def try_div():
+    global aaa, iii
+
+    btn_login.click()
+    time.sleep(1)
+
+    source_html = driver.page_source
+
+    # with open("index2.html", "r", encoding='utf-8') as f:
+    #     source_html = f.read()
+
+    soup = BeautifulSoup(source_html, 'lxml')
+
+    yyy = soup.find_all('a', class_='list-group-item small')
+
+    for mmm in yyy:
+        with open(f'{save_path}{f_name}.txt', 'a', encoding='utf-8') as file:
+            file.write(str(mmm))
+            file.close()
+
+    if select_www == 1:
+        xp_close = '/html/body/div[1]/main/div[2]/div/div[1]/div[2]/div[3]/div/div/div/div/button'
+        try:
+            WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.XPATH, xp_close))).click()
+        except:
+            xp_close = '/html/body/div[1]/main/div[2]/div/div[1]/div[2]/div[4]/div/div/div/div/button'
+            WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.XPATH, xp_close))).click()
+    else:
+        #xp_close = '//*[@id="main"]/div[2]/div/div[1]/div[2]/div[4]/div/div/div/div/button'
+        xp_close = '/html/body/div[1]/main/div[2]/div/div[1]/div[2]/div[4]/div/div/div/div/button'
+        try:
+            WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.XPATH, xp_close))).click()
+        except:
+            xp_close = '/html/body/div[1]/main/div[2]/div/div[1]/div[2]/div[3]/div/div/div/div/button'
+            WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.XPATH, xp_close))).click()
+    time.sleep(1)
+    # time.sleep(randrange(1, 2))
+    aaa += 1
+    print(f'Processed: {f_name}    {aaa} / {ttt_count}')
+    iii += 1
+
+
 aaa = 0
 iii = 1
 xp_iter = 2
 ttt_count = len(tab_)
+
 for ttt in tab_:
     f_name = f'{(ttt.text.split("Results")[0].split("#")[-1]).replace(")", "").strip()}'
 
     try:
         btn_login = driver.find_element(By.XPATH, f'//*[@id="showResultsWidget"]/div[2]/div[{xp_iter}]/div/div[{iii}]/a')
-        btn_login.click()
-        time.sleep(1)
-
-        source_html = driver.page_source
-
-        # with open("index2.html", "r", encoding='utf-8') as f:
-        #     source_html = f.read()
-
-        soup = BeautifulSoup(source_html, 'lxml')
-
-        yyy = soup.find_all('a', class_='list-group-item small')
-
-        for mmm in yyy:
-            with open(f'{save_path}{f_name}.txt', 'a', encoding='utf-8') as file:
-                file.write(str(mmm))
-                file.close()
-
-        if select_www == 1:
-            xp_close = '/html/body/div[1]/main/div[2]/div/div[1]/div[2]/div[3]/div/div/div/div/button'
-        else:
-            xp_close = '//*[@id="main"]/div[2]/div/div[1]/div[2]/div[4]/div/div/div/div/button'
-
-        btn_close = driver.find_element(By.XPATH, xp_close)
-        btn_close.click()
-        time.sleep(1)
-        # time.sleep(randrange(1, 2))
-        aaa += 1
-        print(f'Processed: {f_name}    {aaa} / {ttt_count}')
-        iii += 1
+        try_div()
     except:
-
         iii = 1
         xp_iter += 2
         btn_login = driver.find_element(By.XPATH, f'//*[@id="showResultsWidget"]/div[2]/div[{xp_iter}]/div/div[{iii}]/a')
-        btn_login.click()
-        time.sleep(1)
-
-        source_html = driver.page_source
-
-        # with open("index2.html", "r", encoding='utf-8') as f:
-        #     source_html = f.read()
-
-        soup = BeautifulSoup(source_html, 'lxml')
-
-        yyy = soup.find_all('a', class_='list-group-item small')
-        #print(yyy)
-
-        for mmm in yyy:
-            with open(f'{save_path}{f_name}.txt', 'a', encoding='utf-8') as file:
-                file.write(str(mmm))
-                file.close()
-
-        if select_www == 1:
-            xp_close = '/html/body/div[1]/main/div[2]/div/div[1]/div[2]/div[3]/div/div/div/div/button'
-        else:
-            xp_close = '//*[@id="main"]/div[2]/div/div[1]/div[2]/div[4]/div/div/div/div/button'
-
-        btn_close = driver.find_element(By.XPATH, xp_close)
-        btn_close.click()
-        time.sleep(1)
-        # time.sleep(randrange(1, 2))
-        aaa += 1
-        print(f'Processed: {f_name}    {aaa} / {ttt_count}')
-        iii += 1
+        try_div()
 
 time.sleep(5)
 driver.close()
